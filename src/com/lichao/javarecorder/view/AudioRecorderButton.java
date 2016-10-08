@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -41,7 +42,7 @@ public class AudioRecorderButton extends Button implements AudioStateListener {
 		super(context, attrs);
 		
 		mDialogManager = new DialogManager(getContext());
-		//创建录音文件夹
+		//获取手机本地存储
 		String dir = Environment.getExternalStorageDirectory()+"/lichao";
 		mAudioManager = AudioManager.getInstance(dir);
 		mAudioManager.setOnAudioStateListener(this);
@@ -52,6 +53,7 @@ public class AudioRecorderButton extends Button implements AudioStateListener {
 			public boolean onLongClick(View v) {
 				mReady = true;
 				mAudioManager.prepareAudio();
+				Log.e("lichao", "录音长按");
 				return false;
 			}
 		});
@@ -103,14 +105,17 @@ public class AudioRecorderButton extends Button implements AudioStateListener {
 				//显示在audio回调以后
 				mDialogManager.showRecordingDialog();
 				isRecording = true;
-				//开启单独线程获取音量大小
+				//开启单独线程获取音量大小			
 				new Thread(mGetVoiceLevelRunnable).start();
+				Log.e("lichao", "MSG_AUDIO_PREPARED");
 				break;
 			case MSG_VOICE_CHANGE:
 				mDialogManager.updateVoiceLevel(mAudioManager.getVoiceLevel(7));
+				Log.e("lichao", "MSG_VOICE_CHANGE");
 				break;
 			case MSG_DIALOG_DISMISS:
 				mDialogManager.dismissDialog();
+				Log.e("lichao", "MSG_DIALOG_DISMISS");
 				break;
 			}
 		};
@@ -133,7 +138,6 @@ public class AudioRecorderButton extends Button implements AudioStateListener {
 		switch (action) {
 		case MotionEvent.ACTION_DOWN:
 			changeState(STATE_RECORDING);
-			System.out.println("ACTION_DOWN");
 			break;
 		case MotionEvent.ACTION_MOVE:
 			if(isRecording){//已经开始录音时，进行用户手指判断状态
@@ -143,16 +147,14 @@ public class AudioRecorderButton extends Button implements AudioStateListener {
 					changeState(STATE_RECORDING);
 				}	
 			}
-			System.out.println("ACTION_MOVE");
 			break;
 		case MotionEvent.ACTION_UP:
 			if(!mReady){//没有进行长按，ACTION_UP事件不处理
 				reset();
 				return super.onTouchEvent(event);
 			}
-			if(!isRecording || mTime < 0.6f)
-			{
-				System.out.println("录制时间过短");
+			if(!isRecording || mTime < 0.6f){
+				System.out.println("录制时间过短"+ isRecording + mTime);
 				mDialogManager.tooShort();
 				mAudioManager.cancel();
 				//对话框显示1.3秒
@@ -170,7 +172,6 @@ public class AudioRecorderButton extends Button implements AudioStateListener {
 				mAudioManager.cancel();
 			}
 			reset();
-			System.out.println("ACTION_UP");
 			break;
 		default:
 			break;
@@ -210,6 +211,7 @@ public class AudioRecorderButton extends Button implements AudioStateListener {
 	 */
 	private void changeState(int state) {
 		if(mCurState!=state){
+			mCurState = state;
 			switch (state) {
 			case STATE_NORMAL:
 				setBackgroundResource(R.drawable.btn_recorder_normal);

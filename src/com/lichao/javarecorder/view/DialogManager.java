@@ -49,7 +49,6 @@ public class DialogManager {
 
 			mIcon.setImageResource(R.drawable.recorder);
 			mLabel.setText("松开手指，取消发送");
-			;
 		}
 	}
 
@@ -64,7 +63,6 @@ public class DialogManager {
 
 			mIcon.setImageResource(R.drawable.cancel);
 			mLabel.setText("松开手指，取消发送");
-			;
 		}
 	}
 
@@ -79,7 +77,6 @@ public class DialogManager {
 
 			mIcon.setImageResource(R.drawable.voice_to_short);
 			mLabel.setText("录音时间过短");
-			;
 		}
 	}
 

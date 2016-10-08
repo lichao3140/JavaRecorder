@@ -49,14 +49,15 @@ public class MainActivity extends Activity {
 		mAdapter = new RecorderAdapter(this, mDatas);
 		mListView.setAdapter(mAdapter);
 		
+		//播放发送语音
 		mListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				if(mAnimView!=null){
-					mAnimView.setBackgroundResource(R.drawable.adj);
-					mAnimView=null;	
+				   mAnimView.setBackgroundResource(R.drawable.adj);
+				   mAnimView=null;	
 				}
 				//播放帧动画
 				mAnimView = view.findViewById(R.id.id_recorder_anim);
